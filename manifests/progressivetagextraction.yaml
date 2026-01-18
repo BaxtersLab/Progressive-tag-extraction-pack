@@ -1,0 +1,10 @@
+name: Progressive Tag Extraction
+version: 1.0.0
+description: ComfyUI extension for extracting and arbitrating semantic and style tags from images using dual Nexa CLI instances
+author: Baxter
+license: MIT
+dependencies:
+  - nexa-cli
+  - pillow
+  - torch
+  - numpy
