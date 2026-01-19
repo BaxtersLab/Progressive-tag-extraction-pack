@@ -4,6 +4,7 @@ from .nodes.TagArbiterNode import TagArbiterNode
 from .nodes.PromptTagComparatorNode import PromptTagComparatorNode
 from .nodes.TagLoggerNode import TagLoggerNode
 from .nodes.TagRecommenderNode import TagRecommenderNode
+from .nodes.NexaPopupLoaderNode import NexaPopupLoaderNode
 
 NODE_CLASS_MAPPINGS = {
     "VisionTagExtractorNodeA": VisionTagExtractorNodeA,
@@ -12,6 +13,7 @@ NODE_CLASS_MAPPINGS = {
     "PromptTagComparatorNode": PromptTagComparatorNode,
     "TagLoggerNode": TagLoggerNode,
     "TagRecommenderNode": TagRecommenderNode,
+    "NexaPopupLoaderNode": NexaPopupLoaderNode,
 }
 
 NODE_DISPLAY_NAME_MAPPINGS = {
@@ -21,4 +23,5 @@ NODE_DISPLAY_NAME_MAPPINGS = {
     "PromptTagComparatorNode": "Prompt Tag Comparator",
     "TagLoggerNode": "Tag Logger",
     "TagRecommenderNode": "Tag Recommender",
+    "NexaPopupLoaderNode": "Nexa Popup Loader",
 }
