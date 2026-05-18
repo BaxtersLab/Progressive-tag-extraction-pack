@@ -1,4 +1,1 @@
-pillow
-torch
-numpy
-nexa-cli
+requests

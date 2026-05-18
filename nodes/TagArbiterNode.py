@@ -1,16 +1,24 @@
+import re
+
+
 class TagArbiterNode:
     @classmethod
-    def INPUT_TYPES(s):
-        return {"required": {"semantic_tags": ("STRING",), "style_tags": ("STRING",)} }
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "semantic_tags": ("STRING", {"default": ""}),
+                "style_tags": ("STRING", {"default": ""}),
+            }
+        }
 
     RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("unified_tags",)
     FUNCTION = "arbitrate"
-    CATEGORY = "tag_extraction"
+    CATEGORY = "progressive_tags"
 
     def arbitrate(self, semantic_tags, style_tags):
-        # Merge and deduplicate
-        sem_tags = set(tag.strip() for tag in semantic_tags.split(',') if tag.strip())
-        sty_tags = set(tag.strip() for tag in style_tags.split(',') if tag.strip())
-        unified_tags = sem_tags | sty_tags
-        unified = ', '.join(sorted(unified_tags))
-        return (unified,)
+        def parse(s):
+            return set(t.strip().lower() for t in re.split(r"[,\n;]+", s) if len(t.strip()) > 1)
+
+        unified = parse(semantic_tags) | parse(style_tags)
+        return (", ".join(sorted(unified)),)

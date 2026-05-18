@@ -1,27 +1,46 @@
 import json
+from collections import Counter
+from pathlib import Path
+
+_LOG_FILE = Path(__file__).parent.parent / "logs" / "tags.jsonl"
+
 
 class TagRecommenderNode:
     @classmethod
-    def INPUT_TYPES(s):
-        return {"required": {"log_file": ("STRING",)} }
+    def INPUT_TYPES(cls):
+        return {
+            "required": {
+                "log_file": ("STRING", {"default": str(_LOG_FILE)}),
+                "top_n": ("INT", {"default": 10, "min": 1, "max": 50}),
+            }
+        }
 
     RETURN_TYPES = ("STRING",)
+    RETURN_NAMES = ("recommended_tags",)
     FUNCTION = "recommend"
-    CATEGORY = "tag_extraction"
+    CATEGORY = "progressive_tags"
 
-    def recommend(self, log_file):
-        # Placeholder: read log and suggest based on frequency
-        if os.path.exists(log_file):
-            with open(log_file, 'r') as f:
-                lines = f.readlines()
-            # Simple: most common tags
-            all_tags = []
-            for line in lines[-10:]:  # last 10
-                entry = json.loads(line)
-                all_tags.extend(entry['semantic_tags'] + entry['style_tags'])
-            from collections import Counter
-            common = Counter(all_tags).most_common(5)
-            recommended = ', '.join(tag for tag, _ in common)
-        else:
-            recommended = "No log available"
+    def recommend(self, log_file, top_n):
+        path = Path(log_file)
+        if not path.exists():
+            return ("No log file found. Run the full pipeline first.",)
+
+        all_tags = []
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line:
+                    continue
+                try:
+                    entry = json.loads(line)
+                    all_tags.extend(entry.get("semantic_tags", []))
+                    all_tags.extend(entry.get("style_tags", []))
+                except json.JSONDecodeError:
+                    continue
+
+        if not all_tags:
+            return ("Log is empty.",)
+
+        common = Counter(all_tags).most_common(top_n)
+        recommended = ", ".join(f"{tag}({count})" for tag, count in common)
         return (recommended,)
